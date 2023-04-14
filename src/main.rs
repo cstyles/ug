@@ -10,6 +10,11 @@ fn main() {
 }
 
 fn read_from_stdin() -> String {
+    if atty::is(atty::Stream::Stdin) {
+        eprintln!("stdin is a tty. Please pipe something in.");
+        std::process::exit(1);
+    }
+
     let mut buffer = String::new();
     std::io::stdin().read_to_string(&mut buffer).unwrap();
 
