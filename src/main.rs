@@ -1,4 +1,4 @@
-use std::io::Read;
+use std::io::{Read, Write};
 use uuid::Uuid;
 
 enum Case {
@@ -6,17 +6,30 @@ enum Case {
     Uppercase,
 }
 
+enum Format {
+    Text,
+    Binary,
+}
+
 fn main() {
-    let case = parse_args();
+    let (case, format) = parse_args();
 
     let namespace = Uuid::NAMESPACE_OID;
     let message = read_from_stdin();
     let message = message.trim_end();
     let uuid = Uuid::new_v5(&namespace, message.as_bytes());
 
-    match case {
-        Case::Lowercase => println!("{uuid:x}"),
-        Case::Uppercase => println!("{uuid:X}"),
+    match (format, case) {
+        (Format::Text, Case::Lowercase) => println!("{uuid:x}"),
+        (Format::Text, Case::Uppercase) => println!("{uuid:X}"),
+        (Format::Binary, _) => {
+            let mut stdout = std::io::stdout();
+            let bytes = uuid.as_ref();
+            match stdout.write(bytes) {
+                Ok(bytes_written) => assert_eq!(bytes_written, bytes.len()),
+                Err(err) => eprintln!("{err}"),
+            }
+        }
     }
 }
 
@@ -32,16 +45,19 @@ fn read_from_stdin() -> String {
     buffer
 }
 
-fn parse_args() -> Case {
+fn parse_args() -> (Case, Format) {
     let mut case = Case::Lowercase;
+    let mut format = Format::Text;
 
     for arg in std::env::args().skip(1) {
         match arg.as_str() {
             "-l" | "--lowercase" => case = Case::Lowercase,
             "-U" | "--uppercase" => case = Case::Uppercase,
+            "-t" | "--text" => format = Format::Text,
+            "-b" | "--binary" => format = Format::Binary,
             _ => {}
         }
     }
 
-    case
+    (case, format)
 }
