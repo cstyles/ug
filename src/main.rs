@@ -57,7 +57,10 @@ fn parse_args() -> (Case, Format) {
             "-U" | "--uppercase" => case = Uppercase,
             "-t" | "--text" => format = Text,
             "-b" | "--binary" => format = Binary,
-            _ => {}
+            _ => {
+                eprintln!("Unrecognized option: {arg}");
+                std::process::exit(1);
+            }
         }
     }
 
