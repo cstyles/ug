@@ -55,9 +55,9 @@ fn read_from_stdin() -> String {
 fn print_binary_to_stdout(uuid: Uuid) {
     let mut stdout = std::io::stdout();
     let bytes = uuid.as_ref();
-    match stdout.write(bytes) {
-        Ok(bytes_written) => assert_eq!(bytes_written, bytes.len()),
-        Err(err) => eprintln!("{err}"),
+
+    if let Err(err) = stdout.write_all(bytes) {
+        eprintln!("{err}");
     }
 }
 
