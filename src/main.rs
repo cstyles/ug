@@ -20,14 +20,7 @@ fn main() {
     match (format, case) {
         (Text, Lowercase) => println!("{uuid:x}"),
         (Text, Uppercase) => println!("{uuid:X}"),
-        (Binary, _) => {
-            let mut stdout = std::io::stdout();
-            let bytes = uuid.as_ref();
-            match stdout.write(bytes) {
-                Ok(bytes_written) => assert_eq!(bytes_written, bytes.len()),
-                Err(err) => eprintln!("{err}"),
-            }
-        }
+        (Binary, _) => print_binary_to_stdout(uuid),
     }
 }
 
@@ -58,6 +51,15 @@ fn read_from_stdin() -> String {
     std::io::stdin().read_to_string(&mut buffer).unwrap();
 
     buffer
+}
+
+fn print_binary_to_stdout(uuid: Uuid) {
+    let mut stdout = std::io::stdout();
+    let bytes = uuid.as_ref();
+    match stdout.write(bytes) {
+        Ok(bytes_written) => assert_eq!(bytes_written, bytes.len()),
+        Err(err) => eprintln!("{err}"),
+    }
 }
 
 fn parse_args() -> (Version, Case, Format) {
