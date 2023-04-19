@@ -30,7 +30,6 @@ fn generate_uuid(version: Version) -> Uuid {
         Version::Sha1 => {
             let namespace = Uuid::NAMESPACE_OID;
             let message = read_from_stdin();
-            let message = message.trim_end();
 
             Uuid::new_v5(&namespace, message.as_bytes())
         }
