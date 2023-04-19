@@ -33,6 +33,7 @@ fn main() {
 
 fn generate_uuid(version: Version) -> Uuid {
     match version {
+        Version::Random => Uuid::new_v4(),
         Version::Sha1 => {
             let namespace = Uuid::NAMESPACE_OID;
             let message = read_from_stdin();
@@ -62,9 +63,12 @@ fn read_from_stdin() -> String {
 fn parse_args() -> (Version, Case, Format) {
     let mut case = Lowercase;
     let mut format = Text;
+    let mut version = Version::Random;
 
     for arg in std::env::args().skip(1) {
         match arg.as_str() {
+            "v4" => version = Version::Random,
+            "v5" => version = Version::Sha1,
             "-l" | "--lowercase" => case = Lowercase,
             "-U" | "--uppercase" => case = Uppercase,
             "-t" | "--text" => format = Text,
@@ -76,5 +80,5 @@ fn parse_args() -> (Version, Case, Format) {
         }
     }
 
-    (uuid::Version::Sha1, case, format)
+    (version, case, format)
 }
