@@ -33,17 +33,13 @@ fn generate_uuid(version: Version) -> Uuid {
 
             Uuid::new_v5(&namespace, message.as_bytes())
         }
-        version => {
-            eprintln!("Unsupported UUID version: {version:?}");
-            std::process::exit(1);
-        }
+        version => exit_with_error(format!("Unsupported UUID version: {version:?}")),
     }
 }
 
 fn read_from_stdin() -> String {
     if atty::is(atty::Stream::Stdin) {
-        eprintln!("stdin is a tty. Please pipe something in.");
-        std::process::exit(1);
+        exit_with_error("stdin is a tty. Please pipe something in.")
     }
 
     let mut buffer = String::new();
@@ -57,7 +53,7 @@ fn print_binary_to_stdout(uuid: Uuid) {
     let bytes = uuid.as_ref();
 
     if let Err(err) = stdout.write_all(bytes) {
-        eprintln!("{err}");
+        exit_with_error(err);
     }
 }
 
@@ -74,12 +70,14 @@ fn parse_args() -> (Version, Case, Format) {
             "-U" | "--uppercase" => case = Uppercase,
             "-t" | "--text" => format = Text,
             "-b" | "--binary" => format = Binary,
-            _ => {
-                eprintln!("Unrecognized option: {arg}");
-                std::process::exit(1);
-            }
+            _ => exit_with_error(format!("Unrecognized option: {arg}")),
         }
     }
 
     (version, case, format)
+}
+
+fn exit_with_error(message: impl std::fmt::Display) -> ! {
+    eprintln!("{message}");
+    std::process::exit(1);
 }
