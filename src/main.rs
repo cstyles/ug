@@ -82,11 +82,28 @@ fn parse_args() -> (Option<Version>, Format) {
             "-l" | "--lowercase" => format = Lowercase,
             "-u" | "--uppercase" => format = Uppercase,
             "-b" | "--binary" => format = Binary,
+            "-h" | "--help" => print_help(),
             _ => exit_with_error(format!("Unrecognized option: {arg}")),
         }
     }
 
     (version, format)
+}
+
+fn print_help() -> ! {
+    let program_name = std::env::args().next().unwrap();
+
+    println!("USAGE: {program_name} [OPTIONS] [VERSION]");
+    println!();
+    println!("Arguments:");
+    println!("  [VERSION]        Which version of UUID to use. Options are v4 (default) and v5.");
+    println!();
+    println!("Options:");
+    println!("  -l, --lowercase  Output UUID using lowercase letters (the default).");
+    println!("  -u, --uppercase  Output UUID using uppercase letters.");
+    println!("  -b, --binary     Output UUID in binary format.");
+
+    std::process::exit(0);
 }
 
 fn exit_with_error(message: impl std::fmt::Display) -> ! {
