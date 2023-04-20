@@ -102,6 +102,7 @@ fn print_help() -> ! {
     println!("  -l, --lowercase  Output UUID using lowercase letters (the default).");
     println!("  -u, --uppercase  Output UUID using uppercase letters.");
     println!("  -b, --binary     Output UUID in binary format.");
+    println!("  -h, --help       Print this help message.");
 
     std::process::exit(0);
 }
