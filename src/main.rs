@@ -1,17 +1,12 @@
 use std::io::{Read, Stdin, Write};
 use uuid::Uuid;
 
-use Case::*;
 use Format::*;
 use Version::*;
 
-enum Case {
+enum Format {
     Lowercase,
     Uppercase,
-}
-
-enum Format {
-    Text,
     Binary,
 }
 
@@ -21,13 +16,13 @@ enum Version {
 }
 
 fn main() {
-    let (version, case, format) = parse_args();
+    let (version, format) = parse_args();
     let uuid = generate_uuid(version.unwrap_or(V4));
 
-    match (format, case) {
-        (Text, Lowercase) => println!("{uuid:x}"),
-        (Text, Uppercase) => println!("{uuid:X}"),
-        (Binary, _) => print_binary_to_stdout(uuid),
+    match format {
+        Lowercase => println!("{uuid:x}"),
+        Uppercase => println!("{uuid:X}"),
+        Binary => print_binary_to_stdout(uuid),
     }
 }
 
@@ -67,24 +62,22 @@ fn print_binary_to_stdout(uuid: Uuid) {
     }
 }
 
-fn parse_args() -> (Option<Version>, Case, Format) {
-    let mut case = Lowercase;
-    let mut format = Text;
+fn parse_args() -> (Option<Version>, Format) {
+    let mut format = Lowercase;
     let mut version = None;
 
     for arg in std::env::args().skip(1) {
         match arg.as_str() {
             "v4" => version = Some(V4),
             "v5" => version = Some(V5),
-            "-l" | "--lowercase" => case = Lowercase,
-            "-U" | "--uppercase" => case = Uppercase,
-            "-t" | "--text" => format = Text,
+            "-l" | "--lowercase" => format = Lowercase,
+            "-U" | "--uppercase" => format = Uppercase,
             "-b" | "--binary" => format = Binary,
             _ => exit_with_error(format!("Unrecognized option: {arg}")),
         }
     }
 
-    (version, case, format)
+    (version, format)
 }
 
 fn exit_with_error(message: impl std::fmt::Display) -> ! {
