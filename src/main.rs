@@ -15,7 +15,7 @@ enum Format {
 
 fn main() {
     let (version, case, format) = parse_args();
-    let uuid = generate_uuid(version);
+    let uuid = generate_uuid(version.unwrap_or(Version::Random));
 
     match (format, case) {
         (Text, Lowercase) => println!("{uuid:x}"),
@@ -57,15 +57,15 @@ fn print_binary_to_stdout(uuid: Uuid) {
     }
 }
 
-fn parse_args() -> (Version, Case, Format) {
+fn parse_args() -> (Option<Version>, Case, Format) {
     let mut case = Lowercase;
     let mut format = Text;
-    let mut version = Version::Random;
+    let mut version = None;
 
     for arg in std::env::args().skip(1) {
         match arg.as_str() {
-            "v4" => version = Version::Random,
-            "v5" => version = Version::Sha1,
+            "v4" => version = Some(Version::Random),
+            "v5" => version = Some(Version::Sha1),
             "-l" | "--lowercase" => case = Lowercase,
             "-U" | "--uppercase" => case = Uppercase,
             "-t" | "--text" => format = Text,
