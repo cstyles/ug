@@ -29,6 +29,7 @@ fn main() {
     print_uuid(uuid, format);
 }
 
+/// Parse a UUID from bytes read from stdin.
 fn read_uuid_from_stdin(mut stdin: Stdin) -> Uuid {
     let mut bytes = [0; 16];
     stdin.read_exact(&mut bytes).unwrap();
@@ -36,6 +37,7 @@ fn read_uuid_from_stdin(mut stdin: Stdin) -> Uuid {
     Uuid::from_bytes(bytes)
 }
 
+/// Create a UUID v5 by hashing bytes read from stdin.
 fn generate_v5(stdin: Stdin) -> Uuid {
     let namespace = Uuid::NAMESPACE_OID;
     let bytes = read_from_stdin(stdin);
@@ -51,6 +53,7 @@ fn print_uuid(uuid: Uuid, format: Format) {
     }
 }
 
+/// Returns `None` if stdin is a TTY. Otherwise returns a handle to stdin.
 fn get_stdin() -> Option<Stdin> {
     atty::isnt(atty::Stream::Stdin).then(std::io::stdin)
 }
