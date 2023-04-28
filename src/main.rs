@@ -29,8 +29,11 @@ fn main() {
     print_uuid(uuid, format);
 }
 
-fn read_uuid_from_stdin(_stdin: Stdin) -> Uuid {
-    todo!()
+fn read_uuid_from_stdin(mut stdin: Stdin) -> Uuid {
+    let mut bytes = [0; 16];
+    stdin.read_exact(&mut bytes).unwrap();
+
+    Uuid::from_bytes(bytes)
 }
 
 fn generate_v5(stdin: Stdin) -> Uuid {
