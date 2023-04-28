@@ -17,21 +17,27 @@ enum Version {
 
 fn main() {
     let (version, format) = parse_args();
-    let uuid = generate_uuid(version.unwrap_or(V4));
+    let stdin = get_stdin();
+
+    let uuid = match (stdin, version) {
+        (Some(stdin), None) => read_uuid_from_stdin(stdin),
+        (Some(stdin), Some(V5)) => generate_v5(stdin),
+        (None, Some(V5)) => exit_with_error("stdin is a tty. Please pipe something in."),
+        _ => Uuid::new_v4(),
+    };
 
     print_uuid(uuid, format);
 }
 
-fn generate_uuid(version: Version) -> Uuid {
-    match version {
-        V4 => Uuid::new_v4(),
-        V5 => {
-            let namespace = Uuid::NAMESPACE_OID;
-            let bytes = read_from_stdin();
+fn read_uuid_from_stdin(_stdin: Stdin) -> Uuid {
+    todo!()
+}
 
-            Uuid::new_v5(&namespace, &bytes)
-        }
-    }
+fn generate_v5(stdin: Stdin) -> Uuid {
+    let namespace = Uuid::NAMESPACE_OID;
+    let bytes = read_from_stdin(stdin);
+
+    Uuid::new_v5(&namespace, &bytes)
 }
 
 fn print_uuid(uuid: Uuid, format: Format) {
@@ -46,11 +52,7 @@ fn get_stdin() -> Option<Stdin> {
     atty::isnt(atty::Stream::Stdin).then(std::io::stdin)
 }
 
-fn read_from_stdin() -> Vec<u8> {
-    let Some(mut stdin) = get_stdin() else {
-        exit_with_error("stdin is a tty. Please pipe something in.")
-    };
-
+fn read_from_stdin(mut stdin: Stdin) -> Vec<u8> {
     let mut buffer = vec![];
     stdin.read_to_end(&mut buffer).unwrap();
 
