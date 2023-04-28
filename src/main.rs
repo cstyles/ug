@@ -36,9 +36,9 @@ fn generate_uuid(version: Version) -> Uuid {
         V4 => Uuid::new_v4(),
         V5 => {
             let namespace = Uuid::NAMESPACE_OID;
-            let message = read_from_stdin();
+            let bytes = read_from_stdin();
 
-            Uuid::new_v5(&namespace, message.as_bytes())
+            Uuid::new_v5(&namespace, &bytes)
         }
     }
 }
@@ -47,13 +47,13 @@ fn get_stdin() -> Option<Stdin> {
     atty::isnt(atty::Stream::Stdin).then(std::io::stdin)
 }
 
-fn read_from_stdin() -> String {
+fn read_from_stdin() -> Vec<u8> {
     let Some(mut stdin) = get_stdin() else {
         exit_with_error("stdin is a tty. Please pipe something in.")
     };
 
-    let mut buffer = String::new();
-    stdin.read_to_string(&mut buffer).unwrap();
+    let mut buffer = vec![];
+    stdin.read_to_end(&mut buffer).unwrap();
 
     buffer
 }
