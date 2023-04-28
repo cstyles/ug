@@ -1,4 +1,4 @@
-use std::io::{Read, Write};
+use std::io::{Read, Stdin, Write};
 use uuid::{Uuid, Version};
 use Case::*;
 use Format::*;
@@ -37,13 +37,17 @@ fn generate_uuid(version: Version) -> Uuid {
     }
 }
 
+fn get_stdin() -> Option<Stdin> {
+    atty::isnt(atty::Stream::Stdin).then(std::io::stdin)
+}
+
 fn read_from_stdin() -> String {
-    if atty::is(atty::Stream::Stdin) {
+    let Some(mut stdin) = get_stdin() else {
         exit_with_error("stdin is a tty. Please pipe something in.")
-    }
+    };
 
     let mut buffer = String::new();
-    std::io::stdin().read_to_string(&mut buffer).unwrap();
+    stdin.read_to_string(&mut buffer).unwrap();
 
     buffer
 }
