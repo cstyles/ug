@@ -1,7 +1,9 @@
 use std::io::{Read, Stdin, Write};
-use uuid::{Uuid, Version};
+use uuid::Uuid;
+
 use Case::*;
 use Format::*;
+use Version::*;
 
 enum Case {
     Lowercase,
@@ -13,9 +15,14 @@ enum Format {
     Binary,
 }
 
+enum Version {
+    V4,
+    V5,
+}
+
 fn main() {
     let (version, case, format) = parse_args();
-    let uuid = generate_uuid(version.unwrap_or(Version::Random));
+    let uuid = generate_uuid(version.unwrap_or(V4));
 
     match (format, case) {
         (Text, Lowercase) => println!("{uuid:x}"),
@@ -26,14 +33,13 @@ fn main() {
 
 fn generate_uuid(version: Version) -> Uuid {
     match version {
-        Version::Random => Uuid::new_v4(),
-        Version::Sha1 => {
+        V4 => Uuid::new_v4(),
+        V5 => {
             let namespace = Uuid::NAMESPACE_OID;
             let message = read_from_stdin();
 
             Uuid::new_v5(&namespace, message.as_bytes())
         }
-        version => exit_with_error(format!("Unsupported UUID version: {version:?}")),
     }
 }
 
@@ -68,8 +74,8 @@ fn parse_args() -> (Option<Version>, Case, Format) {
 
     for arg in std::env::args().skip(1) {
         match arg.as_str() {
-            "v4" => version = Some(Version::Random),
-            "v5" => version = Some(Version::Sha1),
+            "v4" => version = Some(V4),
+            "v5" => version = Some(V5),
             "-l" | "--lowercase" => case = Lowercase,
             "-U" | "--uppercase" => case = Uppercase,
             "-t" | "--text" => format = Text,
