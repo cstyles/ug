@@ -66,7 +66,7 @@ fn read_from_stdin(mut stdin: Stdin) -> Vec<u8> {
 }
 
 fn print_binary_to_stdout(uuid: Uuid) {
-    if let Err(err) = std::io::stdout().write_all(uuid.as_ref()) {
+    if let Err(err) = std::io::stdout().write_all(uuid.as_bytes()) {
         exit_with_error(err);
     }
 }
