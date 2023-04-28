@@ -1,0 +1,10 @@
+USAGE: {} [OPTIONS] [VERSION]
+
+Arguments:
+  [VERSION]        Which version of UUID to use. Options are v4 (default) and v5.
+
+Options:
+  -l, --lowercase  Output UUID using lowercase letters (the default).
+  -u, --uppercase  Output UUID using uppercase letters.
+  -b, --binary     Output UUID in binary format.
+  -h, --help       Print this help message.

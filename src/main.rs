@@ -92,18 +92,7 @@ fn parse_args() -> (Option<Version>, Format) {
 
 fn print_help() -> ! {
     let program_name = std::env::args().next().unwrap();
-
-    println!("USAGE: {program_name} [OPTIONS] [VERSION]");
-    println!();
-    println!("Arguments:");
-    println!("  [VERSION]        Which version of UUID to use. Options are v4 (default) and v5.");
-    println!();
-    println!("Options:");
-    println!("  -l, --lowercase  Output UUID using lowercase letters (the default).");
-    println!("  -u, --uppercase  Output UUID using uppercase letters.");
-    println!("  -b, --binary     Output UUID in binary format.");
-    println!("  -h, --help       Print this help message.");
-
+    println!(include_str!("../help.txt"), program_name);
     std::process::exit(0);
 }
 
