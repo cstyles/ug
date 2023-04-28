@@ -19,11 +19,7 @@ fn main() {
     let (version, format) = parse_args();
     let uuid = generate_uuid(version.unwrap_or(V4));
 
-    match format {
-        Lowercase => println!("{uuid:x}"),
-        Uppercase => println!("{uuid:X}"),
-        Binary => print_binary_to_stdout(uuid),
-    }
+    print_uuid(uuid, format);
 }
 
 fn generate_uuid(version: Version) -> Uuid {
@@ -35,6 +31,14 @@ fn generate_uuid(version: Version) -> Uuid {
 
             Uuid::new_v5(&namespace, &bytes)
         }
+    }
+}
+
+fn print_uuid(uuid: Uuid, format: Format) {
+    match format {
+        Lowercase => println!("{uuid:x}"),
+        Uppercase => println!("{uuid:X}"),
+        Binary => print_binary_to_stdout(uuid),
     }
 }
 
