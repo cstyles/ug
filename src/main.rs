@@ -80,7 +80,7 @@ fn parse_args() -> (Option<Version>, Format) {
             "v4" => version = Some(V4),
             "v5" => version = Some(V5),
             "-l" | "--lowercase" => format = Lowercase,
-            "-U" | "--uppercase" => format = Uppercase,
+            "-u" | "--uppercase" => format = Uppercase,
             "-b" | "--binary" => format = Binary,
             _ => exit_with_error(format!("Unrecognized option: {arg}")),
         }
