@@ -58,10 +58,7 @@ fn read_from_stdin() -> Vec<u8> {
 }
 
 fn print_binary_to_stdout(uuid: Uuid) {
-    let mut stdout = std::io::stdout();
-    let bytes = uuid.as_ref();
-
-    if let Err(err) = stdout.write_all(bytes) {
+    if let Err(err) = std::io::stdout().write_all(uuid.as_ref()) {
         exit_with_error(err);
     }
 }
