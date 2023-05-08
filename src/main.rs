@@ -23,6 +23,7 @@ fn main() {
         (Some(stdin), None) => read_uuid_from_stdin(stdin),
         (Some(stdin), Some(V5)) => generate_v5(stdin),
         (None, Some(V5)) => exit_with_error("stdin is a tty. Please pipe something in."),
+        (Some(_), Some(V4)) => exit_with_error("Received piped input but v4 doesn't need input."),
         _ => Uuid::new_v4(),
     };
 
