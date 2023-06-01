@@ -1,4 +1,4 @@
-use std::io::{Read, Stdin, Write};
+use std::io::{IsTerminal, Read, Stdin, Write};
 use uuid::Uuid;
 
 use Format::*;
@@ -57,7 +57,11 @@ fn print_uuid(uuid: Uuid, format: Format) {
 
 /// Returns `None` if stdin is a TTY. Otherwise returns a handle to stdin.
 fn get_stdin() -> Option<Stdin> {
-    atty::isnt(atty::Stream::Stdin).then(std::io::stdin)
+    let stdin = std::io::stdin();
+    match stdin.is_terminal() {
+        true => None,
+        false => Some(stdin),
+    }
 }
 
 fn print_binary_to_stdout(uuid: Uuid) {
