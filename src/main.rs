@@ -33,9 +33,13 @@ fn main() {
 /// Parse a UUID from bytes read from stdin.
 fn read_uuid_from_stdin(mut stdin: Stdin) -> Uuid {
     let mut bytes = [0; 16];
-    stdin.read_exact(&mut bytes).unwrap();
-
-    Uuid::from_bytes(bytes)
+    match stdin.read_exact(&mut bytes) {
+        Err(err) => {
+            let message = format!("Encountered error while reading UUID from input: '{err}'");
+            exit_with_error(message);
+        }
+        Ok(()) => Uuid::from_bytes(bytes),
+    }
 }
 
 /// Create a UUID v5 by hashing bytes read from stdin.
