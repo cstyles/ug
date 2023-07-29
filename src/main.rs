@@ -53,8 +53,8 @@ fn generate_v5(mut stdin: Stdin) -> Uuid {
 
 fn print_uuid(uuid: Uuid, format: Format) {
     match format {
-        Lowercase => println!("{uuid:x}"),
-        Uppercase => println!("{uuid:X}"),
+        Lowercase => print_text(format!("{uuid:x}")),
+        Uppercase => print_text(format!("{uuid:X}")),
         Binary => print_binary_to_stdout(uuid),
     }
 }
@@ -65,6 +65,15 @@ fn get_stdin() -> Option<Stdin> {
     match stdin.is_terminal() {
         true => None,
         false => Some(stdin),
+    }
+}
+
+/// Print a trailing newline if stdout is a TTY.
+/// Otherwise (e.g., if piped) omit the trailing newline.
+fn print_text(output: String) {
+    match std::io::stdout().is_terminal() {
+        true => println!("{output}"),
+        false => print!("{output}"),
     }
 }
 
