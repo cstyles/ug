@@ -103,8 +103,10 @@ fn parse_args() -> (Option<Version>, Format) {
 }
 
 fn print_help() -> ! {
-    let program_name = std::env::args().next().unwrap();
-    println!(include_str!("../help.txt"), program_name);
+    println!(
+        include_str!("../help.txt"),
+        program_name = std::env::args().next().unwrap()
+    );
     std::process::exit(0);
 }
 

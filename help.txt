@@ -1,4 +1,4 @@
-USAGE: {} [OPTIONS] [VERSION]
+USAGE: {program_name} [OPTIONS] [VERSION]
 
 Arguments:
   [VERSION]        Which version of UUID to use. Options are v4 (default) and v5.
