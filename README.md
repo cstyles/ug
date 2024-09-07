@@ -50,6 +50,15 @@ $ ug < uuid.bin
 745d6c61-3dcc-4f77-8428-1acb82774fb0
 ```
 
+Convert a string-formatted UUID into binary:
+
+```shell
+$ echo 0f1878cc-7a14-4f6c-b82f-7c623bc3764a | ug -b | hexyl
+┌────────┬─────────────────────────┬─────────────────────────┬────────┬────────┐
+│00000000│ 0f 18 78 cc 7a 14 4f 6c ┊ b8 2f 7c 62 3b c3 76 4a │••x×z•Ol┊×/|b;×vJ│
+└────────┴─────────────────────────┴─────────────────────────┴────────┴────────┘
+```
+
 Generate a v5 UUID from some input:
 
 ```shell

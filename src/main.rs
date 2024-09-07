@@ -30,15 +30,31 @@ fn main() {
     print_uuid(uuid, format);
 }
 
-/// Parse a UUID from bytes read from stdin.
+/// Read a UUID from stdin, either as bytes or as a string.
 fn read_uuid_from_stdin(mut stdin: Stdin) -> Uuid {
-    let mut bytes = [0; 16];
-    match stdin.read_exact(&mut bytes) {
+    let mut buffer = Vec::with_capacity(40);
+
+    if let Err(err) = stdin.read_to_end(&mut buffer) {
+        let message = format!("Encountered error while reading UUID from input:\n'{err}'");
+        exit_with_error(message);
+    }
+
+    // If we read exactly 16 bytes, return them as a UUID.
+    if let Ok(uuid) = Uuid::from_slice(&buffer) {
+        return uuid;
+    };
+
+    // Otherwise, interpret the input as a string-formatted UUID.
+    let Ok(string) = String::from_utf8(buffer) else {
+        exit_with_error("Input was not valid UTF-8.");
+    };
+
+    match Uuid::parse_str(string.trim_end()) {
+        Ok(uuid) => uuid,
         Err(err) => {
-            let message = format!("Encountered error while reading UUID from input: '{err}'");
+            let message = format!("UUID read from input was invalid:\n'{err}'");
             exit_with_error(message);
         }
-        Ok(()) => Uuid::from_bytes(bytes),
     }
 }
 
