@@ -45,7 +45,7 @@ fn read_uuid_from_stdin(mut stdin: Stdin) -> Uuid {
     };
 
     // Otherwise, interpret the input as a string-formatted UUID.
-    let Ok(string) = String::from_utf8(buffer) else {
+    let Ok(string) = std::str::from_utf8(&buffer) else {
         exit_with_error("Input was not valid UTF-8.");
     };
 
