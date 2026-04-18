@@ -45,11 +45,7 @@ fn read_uuid_from_stdin(mut stdin: Stdin) -> Uuid {
     };
 
     // Otherwise, interpret the input as a string-formatted UUID.
-    let Ok(string) = std::str::from_utf8(&buffer) else {
-        exit_with_error("Input was not valid UTF-8.");
-    };
-
-    match Uuid::parse_str(string.trim_end()) {
+    match Uuid::try_parse_ascii(buffer.trim_ascii_end()) {
         Ok(uuid) => uuid,
         Err(err) => {
             let message = format!("UUID read from input was invalid:\n'{err}'");
